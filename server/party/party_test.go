@@ -11,7 +11,6 @@ import (
 
 func TestServerStartup(t *testing.T) {
 	go StartServer()
-	time.Sleep(2 * time.Second)
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	conn, err := grpc.Dial("localhost:9960", opts...)
 	if err != nil {
