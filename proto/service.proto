@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package="gparty.com/party";
+
+package party;
+
+service Party {
+  // Returns the entire map
+  rpc getPartyMap(GetPartyMapRequest) returns (PartyMap) {}
+}
+
+message GetPartyMapRequest {
+}
+
+message PartyMap {
+  repeated Grid grid = 1;
+}
+
+message Grid {
+  string background_img = 1;
+}
