@@ -10,7 +10,7 @@ import (
 )
 
 func TestServerStartup(t *testing.T) {
-	go StartServer()
+	go StartBackendServer()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	conn, err := grpc.Dial("localhost:9960", opts...)
 	if err != nil {
@@ -25,5 +25,7 @@ func TestServerStartup(t *testing.T) {
 	if err != nil {
 		log.Fatalf("%v.GetPartyMap(_) = _, %v", client, err)
 	}
-	log.Println(partyMap)
+	if len(partyMap.Grid) != 1 {
+		log.Fatalf("returned grid size is not 1.")
+	}
 }

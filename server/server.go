@@ -1,10 +1,15 @@
 package main 
 
 import (
+	"log"
+
 	party "gparty.com/server/party"
 )
 
 func main() {
-	party.StartServer()
+	log.Println("Starting backend")
+	go party.StartBackendServer()
+	log.Println("Starting frontend")
+	party.StartFrontendServer()
 }
 

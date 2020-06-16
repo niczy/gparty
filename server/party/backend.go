@@ -13,7 +13,8 @@ type partyServer struct {
 }
 
 func (s *partyServer) GetPartyMap(ctx context.Context, req *GetPartyMapRequest) (*PartyMap, error) {
-	return &PartyMap{}, nil
+	grid := Grid{BackgroundImg: "https://www.google.com"}
+	return &PartyMap{Grid: []*Grid{&grid}}, nil
 }
 
 func newServer() *partyServer {
@@ -21,7 +22,7 @@ func newServer() *partyServer {
 	return s
 }
 
-func StartServer() {
+func StartBackendServer() {
 	lis, err := net.Listen("tcp", "localhost:9960")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -32,4 +33,6 @@ func StartServer() {
 	RegisterPartyServer(grpcServer, newServer())
 	grpcServer.Serve(lis)
 }
+
+
 
