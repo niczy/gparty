@@ -6,16 +6,43 @@ package party;
 
 service Party {
   // Returns the entire map
-  rpc getPartyMap(GetPartyMapRequest) returns (PartyMap) {}
+  rpc getUserStates(GetUserStatesRequest) returns (GetUserStatesResponse) {}
+  rpc addNewuser(AddNewUserRequest) returns (AddNewUserResponse) {}
+  rpc moveUser(MoveUserRequest) returns (MoveUserResponse) {}
 }
 
-message GetPartyMapRequest {
+message GetUserStatesRequest {
 }
 
-message PartyMap {
-  repeated Grid grid = 1;
+message GetUserStatesResponse {
+  repeated UserState user_states = 1;
 }
 
-message Grid {
-  string background_img = 1;
+message AddNewUserRequest {
+  string user_name = 1;
+  string profile_img = 2;
+}
+
+message AddNewUserResponse {
+  string user_id = 1;
+  Position pos = 2;
+}
+
+message MoveUserRequest {
+  string user_id = 1;
+  Position new_pos = 2;
+}
+
+message MoveUserResponse {
+  Position pos = 1;
+}
+
+message Position {
+  int64 x = 1;
+  int64 y = 2;
+}
+
+message UserState {
+  Position pos = 1;
+  string profile_img = 2;
 }

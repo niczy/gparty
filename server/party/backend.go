@@ -12,9 +12,9 @@ type partyServer struct {
 	UnimplementedPartyServer
 }
 
-func (s *partyServer) GetPartyMap(ctx context.Context, req *GetPartyMapRequest) (*PartyMap, error) {
-	grid := Grid{BackgroundImg: "https://www.google.com"}
-	return &PartyMap{Grid: []*Grid{&grid}}, nil
+func (s *partyServer) GetUserStates(ctx context.Context, req *GetUserStatesRequest) (*GetUserStatesResponse, error) {
+	userState := UserState{ProfileImg: "/img/avatar-1.png"}
+	return &GetUserStatesResponse{UserStates: []*UserState{&userState}}, nil
 }
 
 func newServer() *partyServer {

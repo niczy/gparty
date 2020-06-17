@@ -20,12 +20,12 @@ func TestServerStartup(t *testing.T) {
 	client := NewPartyClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	request := GetPartyMapRequest{}
-	partyMap, err := client.GetPartyMap(ctx, &request)
+	request := GetUserStatesRequest{}
+	response, err := client.GetUserStates(ctx, &request)
 	if err != nil {
 		log.Fatalf("%v.GetPartyMap(_) = _, %v", client, err)
 	}
-	if len(partyMap.Grid) != 1 {
+	if len(response.UserStates) != 1 {
 		log.Fatalf("returned grid size is not 1.")
 	}
 }

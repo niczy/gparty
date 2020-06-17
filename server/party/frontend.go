@@ -22,13 +22,13 @@ func getPartyMap(client PartyClient) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := newContext()
 		defer cancel()
-		request := GetPartyMapRequest{}
-		partyMap, err := client.GetPartyMap(ctx, &request)
+		request := GetUserStatesRequest{}
+		response, err := client.GetUserStates(ctx, &request)
 		if err != nil {
-			log.Fatalf("%v.GetPartyMap(_) = _, %v", client, err)
+			log.Fatalf("%v.GetUserStates(_) = _, %v", client, err)
 		}
 
-		fmt.Fprintf(w, "GetPartyResponse: %v", partyMap)
+		fmt.Fprintf(w, "GetUserStates: %v", response)
 	})
 }
 
