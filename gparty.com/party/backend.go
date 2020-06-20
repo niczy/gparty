@@ -25,6 +25,12 @@ func (s *partyServer) GetUserStates(ctx context.Context, req *GetUserStatesReque
 	return &GetUserStatesResponse{UserStates: userStates}, nil
 }
 
+func (s *partyServer) MoveUser(ctx context.Context, req *MoveUserRequest) (*MoveUserResponse, error) {
+	userState := users[req.UserId]
+	userState.Pos = req.NewPos
+	return &MoveUserResponse{Pos: userState.Pos}, nil
+}
+
 func (s *partyServer) AddNewUser(ctx context.Context, req *AddNewUserRequest) (*AddNewUserResponse, error) {
 	userId := guuid.New().String()
 	position := &Position{X: 1, Y: 2}

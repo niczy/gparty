@@ -3,31 +3,11 @@ package party
 import (
 	"context"
 	"log"
-	"os"
 	"testing"
 	"time"
-
-	"google.golang.org/grpc"
 )
 
-var (
-	client PartyClient
-)
-
-func TestMain(m *testing.M) {
-	go StartBackendServer()
-	opts := []grpc.DialOption{grpc.WithInsecure()}
-	conn, err := grpc.Dial("localhost:9960", opts...)
-	if err != nil {
-		log.Fatalf("fail to dial: %v", err)
-	}
-	defer conn.Close()
-	client = NewPartyClient(conn)
-	log.Println("start running tests.")
-	os.Exit(m.Run())
-}
-
-func addUser(userName string, profileImg string) {
+func addUser(userName string, profileImg string) *UserState {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	request := AddNewUserRequest{
@@ -41,6 +21,25 @@ func addUser(userName string, profileImg string) {
 	if response.UserState == nil {
 		log.Fatalf("returned add new user response fail.")
 	}
+	return response.UserState
+}
+
+func moveUser(userId string, newX, newY int64) *Position {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	req := &MoveUserRequest{
+		UserId: userId,
+		NewPos: &Position{
+			X: newX,
+			Y: newY,
+		},
+	}
+	response, err := client.MoveUser(ctx, req)
+	if err != nil {
+		log.Fatalf("fail to move user.")
+	}
+	return response.Pos
 }
 
 func getUserStates() []*UserState {
@@ -57,6 +56,14 @@ func getUserStates() []*UserState {
 func TestAddNewUser(t *testing.T) {
 	addUser("Nicholas Zhao", "https://www.gogle.co")
 	addUser("bla bal", "https://www.gogle.co")
+}
+
+func TestMoveUser(t *testing.T) {
+	userState := addUser("Nicholas", "https://www.google.com")
+	pos := moveUser(userState.UserId, 2, 3)
+	if pos.X != 2 || pos.Y != 3 {
+		log.Fatalf("Fail to move user")
+	}
 }
 
 func TestGetUserStates(t *testing.T) {
