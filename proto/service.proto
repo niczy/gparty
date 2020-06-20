@@ -7,7 +7,7 @@ package party;
 service Party {
   // Returns the entire map
   rpc getUserStates(GetUserStatesRequest) returns (GetUserStatesResponse) {}
-  rpc addNewuser(AddNewUserRequest) returns (AddNewUserResponse) {}
+  rpc addNewUser(AddNewUserRequest) returns (AddNewUserResponse) {}
   rpc moveUser(MoveUserRequest) returns (MoveUserResponse) {}
 }
 
@@ -24,8 +24,7 @@ message AddNewUserRequest {
 }
 
 message AddNewUserResponse {
-  string user_id = 1;
-  Position pos = 2;
+  UserState user_state = 1;
 }
 
 message MoveUserRequest {
@@ -43,6 +42,8 @@ message Position {
 }
 
 message UserState {
-  Position pos = 1;
+  string user_id = 1;
   string profile_img = 2;
+  string user_name = 3;
+  Position pos = 4;
 }

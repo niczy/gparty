@@ -8,6 +8,10 @@ import (
 	"google.golang.org/grpc"
 )
 
+var (
+	users = make(map[string]UserState)
+)
+
 type partyServer struct {
 	UnimplementedPartyServer
 }
@@ -15,6 +19,19 @@ type partyServer struct {
 func (s *partyServer) GetUserStates(ctx context.Context, req *GetUserStatesRequest) (*GetUserStatesResponse, error) {
 	userState := UserState{ProfileImg: "/img/avatar-1.png"}
 	return &GetUserStatesResponse{UserStates: []*UserState{&userState}}, nil
+}
+
+func (s *partyServer) AddNewUser(ctx context.Context, req *AddNewUserRequest) (*AddNewUserResponse, error) {
+	userId := "uid"
+	position := &Position{X: 1, Y: 2}
+	userState := UserState{
+		UserId: userId,
+		ProfileImg: req.ProfileImg,
+		UserName: req.UserName,
+		Pos: position,
+	}
+	users[userId] = userState
+	return &AddNewUserResponse{UserState: &userState}, nil
 }
 
 func newServer() *partyServer {
