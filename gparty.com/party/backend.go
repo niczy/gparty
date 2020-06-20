@@ -2,8 +2,8 @@ package party
 
 import (
 	"context"
-	"net"
 	"log"
+	"net"
 
 	guuid "github.com/google/uuid"
 	"google.golang.org/grpc"
@@ -14,7 +14,8 @@ var (
 )
 
 type partyServer struct {
-	UnimplementedPartyServer }
+	UnimplementedPartyServer
+}
 
 func (s *partyServer) GetUserStates(ctx context.Context, req *GetUserStatesRequest) (*GetUserStatesResponse, error) {
 	userStates := make([]*UserState, 0, len(users))
@@ -28,10 +29,10 @@ func (s *partyServer) AddNewUser(ctx context.Context, req *AddNewUserRequest) (*
 	userId := guuid.New().String()
 	position := &Position{X: 1, Y: 2}
 	userState := UserState{
-		UserId: userId,
+		UserId:     userId,
 		ProfileImg: req.ProfileImg,
-		UserName: req.UserName,
-		Pos: position,
+		UserName:   req.UserName,
+		Pos:        position,
 	}
 	users[userId] = &userState
 	return &AddNewUserResponse{UserState: &userState}, nil
@@ -57,6 +58,3 @@ func StartBackendServer() {
 	RegisterPartyServer(grpcServer, newServer())
 	grpcServer.Serve(lis)
 }
-
-
-

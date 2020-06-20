@@ -1,16 +1,17 @@
 package party
- import (
-	 "context"
+
+import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"google.golang.org/grpc"
- )
+)
 
 func newContext() (context.Context, context.CancelFunc) {
-        return context.WithTimeout(
+	return context.WithTimeout(
 		context.Background(), 10*time.Second)
 }
 

@@ -3,9 +3,9 @@ package party
 import (
 	"context"
 	"log"
-	"time"
-	"testing"
 	"os"
+	"testing"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -13,6 +13,7 @@ import (
 var (
 	client PartyClient
 )
+
 func TestMain(m *testing.M) {
 	go StartBackendServer()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
@@ -30,14 +31,14 @@ func addUser(userName string, profileImg string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	request := AddNewUserRequest{
-		UserName: "Nicholas Zhao",
+		UserName:   "Nicholas Zhao",
 		ProfileImg: "https://www.google.com",
 	}
 	response, err := client.AddNewUser(ctx, &request)
-	if (err != nil) {
+	if err != nil {
 		log.Fatalf("AddNewUser error %v", err)
 	}
-	if (response.UserState == nil) {
+	if response.UserState == nil {
 		log.Fatalf("returned add new user response fail.")
 	}
 }
