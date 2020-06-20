@@ -5,24 +5,27 @@ import (
 	"net"
 	"log"
 
+	guuid "github.com/google/uuid"
 	"google.golang.org/grpc"
 )
 
 var (
-	users = make(map[string]UserState)
+	users = make(map[string]*UserState)
 )
 
 type partyServer struct {
-	UnimplementedPartyServer
-}
+	UnimplementedPartyServer }
 
 func (s *partyServer) GetUserStates(ctx context.Context, req *GetUserStatesRequest) (*GetUserStatesResponse, error) {
-	userState := UserState{ProfileImg: "/img/avatar-1.png"}
-	return &GetUserStatesResponse{UserStates: []*UserState{&userState}}, nil
+	userStates := make([]*UserState, 0, len(users))
+	for _, userState := range users {
+		userStates = append(userStates, userState)
+	}
+	return &GetUserStatesResponse{UserStates: userStates}, nil
 }
 
 func (s *partyServer) AddNewUser(ctx context.Context, req *AddNewUserRequest) (*AddNewUserResponse, error) {
-	userId := "uid"
+	userId := guuid.New().String()
 	position := &Position{X: 1, Y: 2}
 	userState := UserState{
 		UserId: userId,
@@ -30,13 +33,17 @@ func (s *partyServer) AddNewUser(ctx context.Context, req *AddNewUserRequest) (*
 		UserName: req.UserName,
 		Pos: position,
 	}
-	users[userId] = userState
+	users[userId] = &userState
 	return &AddNewUserResponse{UserState: &userState}, nil
 }
 
 func newServer() *partyServer {
 	s := &partyServer{}
 	return s
+}
+
+func Reset() {
+	users = make(map[string]*UserState)
 }
 
 func StartBackendServer() {

@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func TestAddNewUser(t *testing.T) {
+func addUser(userName string, profileImg string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	request := AddNewUserRequest{
@@ -37,13 +37,12 @@ func TestAddNewUser(t *testing.T) {
 	if (err != nil) {
 		log.Fatalf("AddNewUser error %v", err)
 	}
-	if (response.UserState.UserId != "uid") {
+	if (response.UserState == nil) {
 		log.Fatalf("returned add new user response fail.")
 	}
-
 }
 
-func TestGetUserStates(t *testing.T) {
+func getUserStates() []*UserState {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	request := GetUserStatesRequest{}
@@ -51,7 +50,25 @@ func TestGetUserStates(t *testing.T) {
 	if err != nil {
 		log.Fatalf("%v.GetPartyMap(_) = _, %v", client, err)
 	}
-	if len(response.UserStates) != 1 {
-		log.Fatalf("returned grid size is not 1.")
+	return response.UserStates
+}
+
+func TestAddNewUser(t *testing.T) {
+	addUser("Nicholas Zhao", "https://www.gogle.co")
+	addUser("bla bal", "https://www.gogle.co")
+}
+
+func TestGetUserStates(t *testing.T) {
+	Reset()
+	userStates := getUserStates()
+	if len(userStates) != 0 {
+		log.Fatalf("User states len should be 0. actual userStates %v",
+			userStates)
+	}
+	addUser("Nicholas Zhao", "https://www.google.com")
+	addUser("blabla", "https://www.fb.com")
+	userStates = getUserStates()
+	if len(userStates) != 2 {
+		log.Fatalf("User states len should be 2. Actual length %d, actual userStates %v", len(userStates), userStates)
 	}
 }
