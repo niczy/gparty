@@ -2,15 +2,15 @@ package party
 
 import (
 	"context"
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
 
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 func newContext() (context.Context, context.CancelFunc) {
@@ -23,21 +23,21 @@ func index(w http.ResponseWriter, req *http.Request) {
 }
 
 func dispatchRequest(w http.ResponseWriter,
-			r *http.Request,
-			f func(context.Context) (proto.Message, error)) {
-		ctx, cancel := newContext()
-		defer cancel()
-		response, err := f(ctx)
-		if err != nil {
-			log.Fatalf("Failed to call backend")
-		}
-		js, err := protojson.Marshal(response)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(js)
+	r *http.Request,
+	f func(context.Context) (proto.Message, error)) {
+	ctx, cancel := newContext()
+	defer cancel()
+	response, err := f(ctx)
+	if err != nil {
+		log.Fatalf("Failed to call backend")
+	}
+	js, err := protojson.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 	return
 }
 

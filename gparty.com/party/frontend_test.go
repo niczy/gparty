@@ -1,18 +1,18 @@
 package party
 
 import (
+	"bytes"
 	"io/ioutil"
 	"log"
-	"bytes"
 	"testing"
 
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 func postRequest(req proto.Message, protoRes proto.Message, path string) {
 	bodyBytes, _ := protojson.Marshal(req)
-	res, err := httpClient.Post("http://localhost:8060/_/" + path,
+	res, err := httpClient.Post("http://localhost:8060/_/"+path,
 		"application/json", bytes.NewBuffer(bodyBytes))
 	resBody, err := ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -24,7 +24,7 @@ func postRequest(req proto.Message, protoRes proto.Message, path string) {
 
 func httpAddNewUser() *UserState {
 	req := &AddNewUserRequest{
-		UserName: "Nicholas",
+		UserName:   "Nicholas",
 		ProfileImg: "https://wwww.google.com",
 	}
 	protoRes := &AddNewUserResponse{}
@@ -33,7 +33,7 @@ func httpAddNewUser() *UserState {
 }
 
 func httpMoveUser(userId string, x, y int64) *Position {
-	req := &MoveUserRequest {
+	req := &MoveUserRequest{
 		UserId: userId,
 		NewPos: &Position{X: x, Y: y},
 	}
@@ -65,7 +65,7 @@ func TestGetUserStatesHandler(t *testing.T) {
 
 func TestAddNewUserHandler(t *testing.T) {
 	Reset()
-        httpAddNewUser()
+	httpAddNewUser()
 }
 
 func TestMoveUserHandler(t *testing.T) {

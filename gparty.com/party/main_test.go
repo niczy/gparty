@@ -2,10 +2,10 @@ package party
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"testing"
 	"time"
-	"net/http"
 
 	"google.golang.org/grpc"
 )
@@ -31,5 +31,3 @@ func TestMain(m *testing.M) {
 	log.Println("start running tests.")
 	os.Exit(m.Run())
 }
-
-
