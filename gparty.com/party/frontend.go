@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -21,14 +22,14 @@ func index(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "hello\n")
 }
 
-func getUserStatesHandler(client PartyClient) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func dispatchRequest(w http.ResponseWriter,
+			r *http.Request,
+			f func(context.Context) (proto.Message, error)) {
 		ctx, cancel := newContext()
 		defer cancel()
-		request := GetUserStatesRequest{}
-		response, err := client.GetUserStates(ctx, &request)
+		response, err := f(ctx)
 		if err != nil {
-			log.Fatalf("%v.GetUserStates(_) = _, %v", client, err)
+			log.Fatalf("Failed to call backend")
 		}
 		js, err := protojson.Marshal(response)
 		if err != nil {
@@ -37,45 +38,38 @@ func getUserStatesHandler(client PartyClient) http.Handler {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(js)
+	return
+}
+
+func getUserStatesHandler(client PartyClient) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		dispatchRequest(w, r, func(ctx context.Context) (proto.Message, error) {
+			request := &GetUserStatesRequest{}
+			response, err := client.GetUserStates(ctx, request)
+			return response, err
+		})
 	})
 }
 
 func moveUserHandler(client PartyClient) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := newContext()
-		defer cancel()
-		request := &MoveUserRequest{}
-		response, err := client.MoveUser(ctx, request)
-		if err != nil {
-			log.Fatalf("%v.MoveUser(_) = _, %v", client, err)
-		}
-
-		fmt.Fprintf(w, "MoveUserResponse: %v", response)
-
+		dispatchRequest(w, r, func(ctx context.Context) (proto.Message, error) {
+			request := &MoveUserRequest{}
+			response, err := client.MoveUser(ctx, request)
+			return response, err
+		})
 	})
 }
 
 func addNewUserHandler(client PartyClient) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			panic(err)
-		}
-		request := &AddNewUserRequest{}
-		err = protojson.Unmarshal(body, request)
-		ctx, cancel := newContext()
-		defer cancel()
-		response, err := client.AddNewUser(ctx, request)
-		if err != nil {
-			log.Fatalf("%v.AddNewUser(_) = _, %v", client, err)
-		}
-		js, err := protojson.Marshal(response)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(js)
+		dispatchRequest(w, r, func(ctx context.Context) (proto.Message, error) {
+			body, err := ioutil.ReadAll(r.Body)
+			request := &AddNewUserRequest{}
+			err = protojson.Unmarshal(body, request)
+			response, err := client.AddNewUser(ctx, request)
+			return response, err
+		})
 	})
 }
 
