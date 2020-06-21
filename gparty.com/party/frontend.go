@@ -2,6 +2,7 @@ package party
 
 import (
 	"context"
+	"io/ioutil"
 	"fmt"
 	"log"
 	"net/http"
@@ -56,16 +57,25 @@ func moveUserHandler(client PartyClient) http.Handler {
 
 func addNewUserHandler(client PartyClient) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			panic(err)
+		}
+		request := &AddNewUserRequest{}
+		err = protojson.Unmarshal(body, request)
 		ctx, cancel := newContext()
 		defer cancel()
-		request := &AddNewUserRequest{}
 		response, err := client.AddNewUser(ctx, request)
 		if err != nil {
 			log.Fatalf("%v.AddNewUser(_) = _, %v", client, err)
 		}
-
-		fmt.Fprintf(w, "AddNewUserResponse: %v", response)
-
+		js, err := protojson.Marshal(response)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(js)
 	})
 }
 
