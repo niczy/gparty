@@ -54,7 +54,9 @@ func getUserStatesHandler(client PartyClient) http.Handler {
 func moveUserHandler(client PartyClient) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		dispatchRequest(w, r, func(ctx context.Context) (proto.Message, error) {
+			body, err := ioutil.ReadAll(r.Body)
 			request := &MoveUserRequest{}
+			err = protojson.Unmarshal(body, request)
 			response, err := client.MoveUser(ctx, request)
 			return response, err
 		})
