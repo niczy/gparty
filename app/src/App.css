@@ -1,0 +1,9 @@
+.App {
+  height: 700px;
+  width: 900px; 
+  margin: auto;
+  background-image: url('/bg.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
