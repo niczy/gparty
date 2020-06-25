@@ -7,3 +7,12 @@
   background-attachment: fixed;
   background-position: center;
 }
+
+.grid {
+  height: 70px;
+  width: 70px;
+  margin: 0.3px;
+  padding: 0.5px;
+  border: 1px solid;
+  display: inline-block;
+}
