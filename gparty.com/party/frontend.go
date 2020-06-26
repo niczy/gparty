@@ -37,6 +37,7 @@ func dispatchRequest(w http.ResponseWriter,
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write(js)
 	return
 }
